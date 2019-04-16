@@ -1,0 +1,15 @@
+hazelcast:
+  network:
+    join:
+      multicast:
+        enabled: false
+      tcp-ip:
+        enabled: true
+
+  queue:
+    foobar:
+
+  map:
+    foobar:
+      time-to-live-seconds: 3600
+      max-idle-seconds: 600

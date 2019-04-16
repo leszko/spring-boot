@@ -16,18 +16,18 @@
 
 package org.springframework.boot.autoconfigure.hazelcast;
 
-import java.io.IOException;
-import java.net.URL;
-
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
+import com.hazelcast.config.YamlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
+
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Factory that can be used to create a {@link HazelcastInstance}.
@@ -61,7 +61,15 @@ public class HazelcastInstanceFactory {
 
 	private Config getConfig(Resource configLocation) throws IOException {
 		URL configUrl = configLocation.getURL();
-		Config config = new XmlConfigBuilder(configUrl).build();
+		String configFileName = configUrl.getFile();
+
+		Config config;
+		if (configFileName.endsWith(".xml"))
+			config =  new XmlConfigBuilder(configUrl).build();
+		else // yaml config available in the calsspath
+			config = new YamlConfigBuilder(configUrl).build();
+
+
 		if (ResourceUtils.isFileURL(configUrl)) {
 			config.setConfigurationFile(configLocation.getFile());
 		}
