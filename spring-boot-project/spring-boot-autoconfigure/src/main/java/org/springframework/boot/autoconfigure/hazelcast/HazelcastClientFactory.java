@@ -16,17 +16,18 @@
 
 package org.springframework.boot.autoconfigure.hazelcast;
 
+import java.io.IOException;
+import java.net.URL;
+
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.XmlClientConfigBuilder;
 import com.hazelcast.client.config.YamlClientConfigBuilder;
 import com.hazelcast.core.HazelcastInstance;
+
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * Factory that can be used to create a client {@link HazelcastInstance}.
@@ -61,10 +62,12 @@ public class HazelcastClientFactory {
 		URL configUrl = clientConfigLocation.getURL();
 		String configFileName = configUrl.getFile();
 
-		if (configFileName.endsWith(".xml"))
-			return  new XmlClientConfigBuilder(configUrl).build();
-		else // yaml config available in the calsspath
+		if (configFileName.endsWith(".xml")) {
+			return new XmlClientConfigBuilder(configUrl).build();
+		}
+		else { // yaml config available in the calsspath
 			return new YamlClientConfigBuilder(configUrl).build();
+		}
 	}
 
 	/**
