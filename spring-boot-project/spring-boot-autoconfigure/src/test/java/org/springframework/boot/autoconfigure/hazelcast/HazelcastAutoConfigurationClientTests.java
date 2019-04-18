@@ -62,67 +62,61 @@ public class HazelcastAutoConfigurationClientTests {
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(HazelcastAutoConfiguration.class));
 
-	// XML Config Tests
 	@Test
-	public void systemProperty() {
-		this.contextRunner
-				.withSystemProperties(HazelcastClientConfiguration.CONFIG_SYSTEM_PROPERTY
-						+ "=classpath:org/springframework/boot/autoconfigure/hazelcast/"
-						+ "hazelcast-client-specific.xml")
-				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
-						.isInstanceOf(HazelcastInstance.class)
-						.has(nameStartingWith("hz.client_")));
+	public void systemPropertyWithXml() {
+		systemProperty(HazelcastClientConfiguration.CONFIG_SYSTEM_PROPERTY
+				+ "=classpath:org/springframework/boot/autoconfigure/hazelcast/"
+				+ "hazelcast-client-specific.xml");
 	}
 
-	@Test
-	public void explicitConfigFile() {
-		this.contextRunner
-				.withPropertyValues(
-						"spring.hazelcast.config=org/springframework/boot/autoconfigure/"
-								+ "hazelcast/hazelcast-client-specific.xml")
-				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
-						.isInstanceOf(HazelcastClientProxy.class)
-						.has(nameStartingWith("hz.client_")));
-	}
-
-	@Test
-	public void explicitConfigUrl() {
-		this.contextRunner
-				.withPropertyValues(
-						"spring.hazelcast.config=hazelcast-client-default.xml")
-				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
-						.isInstanceOf(HazelcastClientProxy.class)
-						.has(nameStartingWith("hz.client_")));
-	}
-
-	// YAML config tests
 	@Test
 	public void systemPropertyWithYaml() {
+		systemProperty(HazelcastClientConfiguration.CONFIG_SYSTEM_PROPERTY
+				+ "=classpath:org/springframework/boot/autoconfigure/hazelcast/"
+				+ "hazelcast-client-specific.yaml");
+	}
+
+	private void systemProperty(String systemProperty) {
 		this.contextRunner
-				.withSystemProperties(HazelcastClientConfiguration.CONFIG_SYSTEM_PROPERTY
-						+ "=classpath:org/springframework/boot/autoconfigure/hazelcast/"
-						+ "hazelcast-client-specific.yaml")
+				.withSystemProperties(systemProperty)
 				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
 						.isInstanceOf(HazelcastInstance.class)
 						.has(nameStartingWith("hz.client_")));
+	}
+
+	@Test
+	public void explicitConfigFileWithXml() {
+		explicitConfigFile("spring.hazelcast.config=org/springframework/boot/autoconfigure/"
+				+ "hazelcast/hazelcast-client-specific.xml");
 	}
 
 	@Test
 	public void explicitConfigFileWithYaml() {
+		explicitConfigFile("spring.hazelcast.config=org/springframework/boot/autoconfigure/"
+				+ "hazelcast/hazelcast-client-specific.yaml");
+	}
+
+	private void explicitConfigFile(String propertyValues) {
 		this.contextRunner
-				.withPropertyValues(
-						"spring.hazelcast.config=org/springframework/boot/autoconfigure/"
-								+ "hazelcast/hazelcast-client-specific.yaml")
+				.withPropertyValues(propertyValues)
 				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
 						.isInstanceOf(HazelcastClientProxy.class)
 						.has(nameStartingWith("hz.client_")));
 	}
 
 	@Test
+	public void explicitConfigUrlWithXml() {
+		explicitConfigUrl("spring.hazelcast.config=hazelcast-client-default.xml");
+	}
+
+	@Test
 	public void explicitConfigUrlWithYaml() {
+		explicitConfigUrl("spring.hazelcast.config=hazelcast-client-default.yaml");
+	}
+
+	private void explicitConfigUrl(String propertyValues) {
 		this.contextRunner
-				.withPropertyValues(
-						"spring.hazelcast.config=hazelcast-client-default.yaml")
+				.withPropertyValues(propertyValues)
 				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
 						.isInstanceOf(HazelcastClientProxy.class)
 						.has(nameStartingWith("hz.client_")));
