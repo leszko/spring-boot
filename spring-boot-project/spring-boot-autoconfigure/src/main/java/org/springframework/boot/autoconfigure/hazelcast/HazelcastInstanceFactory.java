@@ -68,7 +68,7 @@ public class HazelcastInstanceFactory {
 		if (configFileName.endsWith(".xml")) {
 			config = new XmlConfigBuilder(configUrl).build();
 		}
-		else { // yaml config available in the calsspath
+		else { // yaml config available in the classpath
 			config = new YamlConfigBuilder(configUrl).build();
 		}
 
