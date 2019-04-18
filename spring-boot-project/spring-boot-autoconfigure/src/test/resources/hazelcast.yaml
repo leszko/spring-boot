@@ -3,5 +3,3 @@ hazelcast:
     join:
       multicast:
         enabled: false
-      tcp-ip:
-        enabled: false
