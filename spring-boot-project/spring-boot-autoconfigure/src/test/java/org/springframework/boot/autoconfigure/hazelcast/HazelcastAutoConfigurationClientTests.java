@@ -77,31 +77,31 @@ public class HazelcastAutoConfigurationClientTests {
 	}
 
 	private void systemProperty(String systemProperty) {
-		this.contextRunner
-				.withSystemProperties(systemProperty)
+		this.contextRunner.withSystemProperties(systemProperty)
 				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
 						.isInstanceOf(HazelcastInstance.class)
-						.has(nameStartingWith("hz.client_")));
+						.has(labelEqualTo("configured-client")));
 	}
 
 	@Test
 	public void explicitConfigFileWithXml() {
-		explicitConfigFile("spring.hazelcast.config=org/springframework/boot/autoconfigure/"
-				+ "hazelcast/hazelcast-client-specific.xml");
+		explicitConfigFile(
+				"spring.hazelcast.config=org/springframework/boot/autoconfigure/"
+						+ "hazelcast/hazelcast-client-specific.xml");
 	}
 
 	@Test
 	public void explicitConfigFileWithYaml() {
-		explicitConfigFile("spring.hazelcast.config=org/springframework/boot/autoconfigure/"
-				+ "hazelcast/hazelcast-client-specific.yaml");
+		explicitConfigFile(
+				"spring.hazelcast.config=org/springframework/boot/autoconfigure/"
+						+ "hazelcast/hazelcast-client-specific.yaml");
 	}
 
 	private void explicitConfigFile(String propertyValues) {
-		this.contextRunner
-				.withPropertyValues(propertyValues)
+		this.contextRunner.withPropertyValues(propertyValues)
 				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
 						.isInstanceOf(HazelcastClientProxy.class)
-						.has(nameStartingWith("hz.client_")));
+						.has(labelEqualTo("configured-client")));
 	}
 
 	@Test
@@ -115,14 +115,10 @@ public class HazelcastAutoConfigurationClientTests {
 	}
 
 	private void explicitConfigUrl(String propertyValues) {
-		this.contextRunner
-				.withPropertyValues(propertyValues)
+		this.contextRunner.withPropertyValues(propertyValues)
 				.run((context) -> assertThat(context).getBean(HazelcastInstance.class)
-						.isInstanceOf(HazelcastClientProxy.class)
-						.has(nameStartingWith("hz.client_")));
+						.isInstanceOf(HazelcastClientProxy.class));
 	}
-
-	// Other tests
 
 	@Test
 	public void unknownConfigFile() {
@@ -141,9 +137,10 @@ public class HazelcastAutoConfigurationClientTests {
 						.isInstanceOf(HazelcastClientProxy.class));
 	}
 
-	private Condition<HazelcastInstance> nameStartingWith(String prefix) {
-		return new Condition<>((o) -> o.getName().startsWith(prefix),
-				"Name starts with " + prefix);
+	private Condition<HazelcastInstance> labelEqualTo(String label) {
+		return new Condition<>((o) -> ((HazelcastClientProxy) o).getClientConfig()
+				.getLabels().stream().anyMatch((e) -> e.equals(label)),
+				"Label equals to " + label);
 	}
 
 	@Configuration(proxyBeanMethods = false)
