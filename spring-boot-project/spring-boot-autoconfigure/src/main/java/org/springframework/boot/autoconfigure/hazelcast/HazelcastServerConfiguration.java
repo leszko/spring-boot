@@ -16,17 +16,18 @@
 
 package org.springframework.boot.autoconfigure.hazelcast;
 
+import java.io.IOException;
+
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-
-import java.io.IOException;
 
 /**
  * Configuration for Hazelcast server.
@@ -76,7 +77,7 @@ class HazelcastServerConfiguration {
 
 		ConfigAvailableCondition() {
 			super(CONFIG_SYSTEM_PROPERTY, "file:./hazelcast.xml",
-					"classpath:/hazelcast.xml","file:./hazelcast.yaml",
+					"classpath:/hazelcast.xml", "file:./hazelcast.yaml",
 					"classpath:/hazelcast.yaml");
 		}
 
